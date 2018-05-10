@@ -16,9 +16,9 @@ const _data = require('./lib/data');
 // @TODO delete this when done
 
 // Create Test
-// _data.create('test','newFile',{'key' : 'value'},function(err){
-//   console.log('encountered the following error',err);
-// })
+_data.create('test','newFile',{'myKey' : 'My value'},function(err){
+  console.log('encountered the following error',err);
+})
 
 // Read Test
 // _data.read('test','newFile',function(err,data){
@@ -27,6 +27,11 @@ const _data = require('./lib/data');
 
 // Update Test
 // _data.update('test','newFile',{'newKey' : 'new value'},function(err){
+//   console.log('encountered the following error',err);
+// })
+
+// Delete Test
+// _data.delete('test','newFile',function(err){
 //   console.log('encountered the following error',err);
 // })
 
