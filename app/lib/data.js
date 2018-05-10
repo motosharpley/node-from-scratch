@@ -16,7 +16,7 @@ lib.baseDir = path.join(__dirname,'/../.data/');
 // Write data to a file
 lib.create = function(dir,file,data,callback){
   // Open the file for writing
-  fs.open(lib.baseDir+dir+'/'+'.josn','wx',function(err,fileDescriptor){
+  fs.open(lib.baseDir+dir+'/'+file+'.json','wx',function(err,fileDescriptor){
     if(!err && fileDescriptor){
       // Convert data to a string
       const stringData = JSON.stringify(data);
@@ -31,7 +31,7 @@ lib.create = function(dir,file,data,callback){
               callback('Error closing new file');
             }
           })
-        }else {
+        } else {
           callback('Error writing to new file');
         }
       })
@@ -40,6 +40,14 @@ lib.create = function(dir,file,data,callback){
     }
   })
 }
+
+// Read data from file
+lib.read = function(dir,file,callback){
+  fs.readFile(lib.baseDir+dir+'/'+file+'.json', 'utf8', function(err,data){
+    callback(err,data);
+  })
+}
+
 
 
 
