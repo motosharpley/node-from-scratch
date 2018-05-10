@@ -48,7 +48,39 @@ lib.read = function(dir,file,callback){
   })
 }
 
+// Update data in a file
+lib.update = function(dir,file,data,callback){
+  // open the file
+  fs.open(lib.baseDir+dir+'/'+file+'.json','r+',function(err,fileDescriptor){
+    if(!err && fileDescriptor){
+      const stringData = JSON.stringify(data);
 
+      // Truncate the file
+      fs.truncate(fileDescriptor,function(err){
+        if(!err){
+          // Write to the file and close it
+          fs.writeFile(fileDescriptor,stringData,function(err){
+            if(!err){
+              fs.close(fileDescriptor,function(err){
+                if(!err){
+                  callback(false);
+                } else {
+                  callback('There was an error closing the file');
+                }
+              })
+            } else {
+              callback('There was an error writing to file');
+            }
+          })
+        } else {
+          callback('Error truncating file');
+        }
+      })
+    } else {
+      callback('Could not open file');
+    }
+  })
+}
 
 
 
