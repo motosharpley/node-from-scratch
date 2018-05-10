@@ -82,6 +82,18 @@ lib.update = function(dir,file,data,callback){
   })
 }
 
+// Delete a file
+lib.delete = function(dir,file,callback){
+  // Unlink the file
+  fs.unlink(lib.baseDir+dir+'/'+file+'.json',function(err){
+    if(!err){
+      callback(false);
+    } else {
+      callback('There was an error deleting the file');
+    }
+  })
+}
+
 
 
 // Export the module
