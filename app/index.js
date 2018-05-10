@@ -14,9 +14,18 @@ const _data = require('./lib/data');
 
 // TESTING DATA 
 // @TODO delete this when done
-_data.create('test','newFile',{'key' : 'value'},function(err){
-  console.log('encountered the following error',err);
-})
+
+// Create Test
+// _data.create('test','newFile',{'key' : 'value'},function(err){
+//   console.log('encountered the following error',err);
+// })
+
+// Read Test
+_data.read('test','newFile',function(err,data){
+    console.log('encountered the following error',err, 'Received this data ', data);
+  })
+
+// ---- End Test ----
 
 // Instantiate the HTTP server
 const httpServer = http.createServer(function(req, res) {
