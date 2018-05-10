@@ -21,11 +21,16 @@ const _data = require('./lib/data');
 // })
 
 // Read Test
-_data.read('test','newFile',function(err,data){
-    console.log('encountered the following error',err, 'Received this data ', data);
-  })
+// _data.read('test','newFile',function(err,data){
+//     console.log('encountered the following error',err, 'Received this data ', data);
+//   })
 
-// ---- End Test ----
+// Update Test
+// _data.update('test','newFile',{'newKey' : 'new value'},function(err){
+//   console.log('encountered the following error',err);
+// })
+
+// ---- END TESTS ----
 
 // Instantiate the HTTP server
 const httpServer = http.createServer(function(req, res) {
