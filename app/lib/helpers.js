@@ -6,7 +6,7 @@
 
 // Dependencies
 const crypto = require('crypto');
-const config = require('../config');
+const config = require('./config');
 
 // Containter for helpers
 const helpers = {};
@@ -18,6 +18,16 @@ helpers.hash = function(str){
     return hash;
   } else {
     return false;
+  }
+}
+
+// Parse a JSON string to an object in all cases, without throwing
+helpers.parseJsonToObject = function(str){
+  try{
+    const obj = JSON.parse(str);
+    return obj;
+  }catch(e){
+    return {};
   }
 }
 

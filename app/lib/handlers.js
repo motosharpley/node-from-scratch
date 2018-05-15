@@ -16,6 +16,11 @@ handlers.ping = function(data,callback){
   callback(200);
 }
 
+// Not found handler
+handlers.notFound = function(data,callback){
+  callback(404);
+}
+
 // Users
 handlers.users = function(data,callback){
   const acceptedMethods = ['get','post','put','delete'];
@@ -50,14 +55,40 @@ handlers._users.post = function(data,callback){
     _data.read('users',phone,function(err,data){
       if(err){
         // Hash the password
-        const hashPassword = helpers.hash(password);
+        const hashedPassword = helpers.hash(password);
+
+        // Create User Object
+        if(hashedPassword){
+          const userObject = {
+            'firstName': firstName,
+            'lastName' : lastName,
+            'phone' : phone,
+            'hashedPassword' : hashedPassword,
+            'tosAgreement' : true
+          };
+  
+          // Store the User
+          _data.create('users',phone,userObject,function(err){
+            if(!err){
+              callback(200);
+            } else {
+              console.log(err);
+              callback(500,{'Error' : 'Could not create new user'});
+            }
+          });
+        } else {
+          callback(500,{'Error' : 'Could not hash the password'});
+        }
+
       } else {
         callback(400,{'Error' : 'User with that phone number already exists'});
       }
-    })
+    });
+
   } else {
     callback(400,{'Error' : 'Missing Required Fields'});
   }
+
 }
 
 // Users - PUT
@@ -70,10 +101,6 @@ handlers._users.delete = function(data,callback){
 
 }
 
-// Not found handler
-handlers.notFound = function(data,callback){
-  callback(404);
-}
 
 // Export Handlers Module
 module.exports = handlers;
