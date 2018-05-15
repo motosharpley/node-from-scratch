@@ -24,6 +24,29 @@ handlers.users = function(data,callback){
   }
 }
 
+// Container for users sub-methods
+handlers._users = {};
+
+// Users - GET
+handlers._users.get = function(data,callback){
+
+}
+
+// Users - POST
+handlers._users.post = function(data,callback){
+
+}
+
+// Users - PUT
+handlers._users.put = function(data,callback){
+
+}
+
+// Users - DELETE
+handlers._users.delete = function(data,callback){
+  
+}
+
 // Not found handler
 handlers.notFound = function(data,callback){
   callback(404);
