@@ -11,6 +11,7 @@ const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
 const fs = require('fs');
 const _data = require('./lib/data');
+const handlers = require('./lib/handlers');
 
 // TESTING DATA 
 // @TODO delete this when done
@@ -130,19 +131,6 @@ const unifiedServer = function(req,res){
     console.log('Request was recieved with this payload:', buffer);
     
   })
-}
-
-// Define handlers
-const handlers = {};
-
-// Ping handler
-handlers.ping = function(data,callback){
-  callback(200);
-}
-
-// Not found handler
-handlers.notFound = function(data,callback){
-  callback(404);
 }
 
 // Define a request router
