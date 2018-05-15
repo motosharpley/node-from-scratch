@@ -110,7 +110,54 @@ handlers._users.post = function(data,callback){
 }
 
 // Users - PUT
+// Required data: phone
+// Optional data: firstName, lastName, password(at least one must be specified)
+// @TODO Only let an authenticated user update their own object
 handlers._users.put = function(data,callback){
+  // Check for the required field
+  const phone = typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 ? data.payload.phone.trim() : false;
+
+  // Check for the optional field
+  const firstName = typeof(data.payload.firstName) == 'string' && data.payload.firstName.trim().length > 0 ? data.payload.firstName.trim() : false;
+  const lastName = typeof(data.payload.lastName) == 'string' && data.payload.lastName.trim().length > 0 ? data.payload.lastName.trim() : false;
+  const password = typeof(data.payload.password) == 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false;
+  
+  // Error if the phone is invalid
+  if(phone){
+    // Error if nothing is sent to update
+    if(firstName || lastName || password){
+      // Lookup the user
+      _data.read('users',phone,function(err,userData){
+        if(!err && userData){
+          // Update the necessary fields
+          if(firstName){
+            userData.firstName = firstName;
+          }
+          if(lastName){
+            userData.lastName = lastName;
+          }
+          if(password){
+            userData.hashedPassword = helpers.hash(password);
+          }
+          // Store new updates
+          _data.update('users',phone,userData,function(err){
+            if(!err){
+              callback(200);
+            } else {
+              console.log(err);
+              callback(500,{'Error' : 'Could not update user'});
+            }
+          })
+        } else {
+          callback(400,{'Error' : 'User does not exist'});
+        }
+      })
+    } else {
+      callback(400,{'Error' : 'Missing fields to update'});
+    }
+  } else {
+    callback(400,{'Error' : 'Missing required field'});
+  }
 
 }
 
