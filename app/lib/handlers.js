@@ -188,6 +188,42 @@ handlers._users.delete = function(data,callback){
   }
 }
 
+/*
+*
+* START OF TOKENS HANDLERS
+*/
+// Tokens
+handlers.tokens = function(data,callback){
+  const acceptedMethods = ['get','post','put','delete'];
+  if(acceptedMethods.indexOf(data.method) > -1){
+    handlers._tokens[data.method](data,callback);
+  } else {
+    callback(405);
+  }
+}
+
+// Container for tokens sub-methods
+handlers._tokens = {};
+
+// Tokens - GET
+handlers._tokens.get = function(data,callback){
+
+}
+
+// Tokens - POST
+handlers._tokens.post = function(data,callback){
+  
+}
+
+// Tokens - PUT
+handlers._tokens.put = function(data,callback){
+  
+}
+
+// Tokens - DELETE
+handlers._tokens.delete = function(data,callback){
+  
+}
 
 // Export Handlers Module
 module.exports = handlers;
