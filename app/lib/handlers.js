@@ -268,8 +268,38 @@ handlers._tokens.post = function(data,callback){
 }
 
 // Tokens - PUT
+// Required data: id, extend
+// Optional data: none
 handlers._tokens.put = function(data,callback){
-  
+  const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 20 ? data.payload.id.trim() : false;
+  const extend = typeof(data.payload.extend) == 'boolean' && data.payload.extend == true ? true : false;
+  if(id && extend){
+    // Lookup the token
+    _data.read('tokens',id,function(err,tokenData){
+      if(!err && tokenData){
+        // Check to see that token is not already expired
+        if(tokenData.expires > Date.now()){
+          // set expiration 1 hour from now
+          tokenData.expires = Date.now() + 1000 * 60 * 60;
+
+          // Store the new updates
+          _data.update('tokens',id,tokenData,function(err){
+            if(!err){
+              callback(200);
+            } else {
+              callback(500,{'Error' : 'Could not update token expiration'});
+            }
+          })
+        } else {
+          callback(400,{'Error' : 'Token has already expired and cannot be extended'});
+        }
+      } else {
+        callback(400,{'Error' : 'Specified token does not exist'});
+      }
+    })
+  } else {
+    callback(400,{'Error' : 'Required field(s) missing or invalid'});
+  }
 }
 
 // Tokens - DELETE
