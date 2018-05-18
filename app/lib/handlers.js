@@ -187,20 +187,30 @@ handlers._users.delete = function(data,callback){
   // Check that phone number is valid
   const phone = typeof(data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
   if(phone){
-    // Lookup the user
-    _data.read('users',phone,function(err,data){
-      if(!err && data){
-      _data.delete('users',phone,function(err){
-        if(!err){
-          callback(200);
-        } else {
-          callback(500,{'Error' : 'Could not delete specified user'});
-        }
+    // Get the token from the headers
+    const token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+      
+    // Verify that the given token is valid for current phone number
+    handlers._tokens.verifyToken(token,phone,function(tokenIsValid){
+      if(tokenIsValid){
+        // Lookup the user
+        _data.read('users',phone,function(err,data){
+          if(!err && data){
+            _data.delete('users',phone,function(err){
+              if(!err){
+                callback(200);
+              } else {
+                callback(500,{'Error' : 'Could not delete specified user'});
+              }
+            })
+          } else {
+            callback(400,{'Error' : 'User not found'});
+          }
+        })
+       } else {
+        callback(403,{'Error' : 'Missing or Invalid Token in header'});
+       }
       })
-      } else {
-        callback(400,{'Error' : 'User not found'});
-      }
-    })
   } else {
     callback(400,{'Error' : 'Missing required field'});
   }
