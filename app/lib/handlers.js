@@ -37,7 +37,6 @@ handlers._users = {};
 // Users - GET
 // Required data: phone
 // Optional data: none
-
 handlers._users.get = function(data,callback){
   // Check that phone number is valid
   const phone = typeof(data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
@@ -122,7 +121,6 @@ handlers._users.post = function(data,callback){
 // Users - PUT
 // Required data: phone
 // Optional data: firstName, lastName, password(at least one must be specified)
-// @TODO Only let an authenticated user update their own object
 handlers._users.put = function(data,callback){
   // Check for the required field
   const phone = typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 ? data.payload.phone.trim() : false;
@@ -136,39 +134,49 @@ handlers._users.put = function(data,callback){
   if(phone){
     // Error if nothing is sent to update
     if(firstName || lastName || password){
-      // Lookup the user
-      _data.read('users',phone,function(err,userData){
-        if(!err && userData){
-          // Update the necessary fields
-          if(firstName){
-            userData.firstName = firstName;
-          }
-          if(lastName){
-            userData.lastName = lastName;
-          }
-          if(password){
-            userData.hashedPassword = helpers.hash(password);
-          }
-          // Store new updates
-          _data.update('users',phone,userData,function(err){
-            if(!err){
-              callback(200);
+      
+      // Get the token from the headers
+      const token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+      
+      // Verify that the given token is valid for current phone number
+      handlers._tokens.verifyToken(token,phone,function(tokenIsValid){
+        if(tokenIsValid){
+          // Lookup the user
+          _data.read('users',phone,function(err,userData){
+            if(!err && userData){
+              // Update the necessary fields
+              if(firstName){
+                userData.firstName = firstName;
+              }
+              if(lastName){
+                userData.lastName = lastName;
+              }
+              if(password){
+                userData.hashedPassword = helpers.hash(password);
+              }
+              // Store new updates
+              _data.update('users',phone,userData,function(err){
+                if(!err){
+                  callback(200);
+                } else {
+                  console.log(err);
+                  callback(500,{'Error' : 'Could not update user'});
+                }
+              })
             } else {
-              console.log(err);
-              callback(500,{'Error' : 'Could not update user'});
+              callback(400,{'Error' : 'User does not exist'});
             }
           })
-        } else {
-          callback(400,{'Error' : 'User does not exist'});
-        }
-      })
+            } else {
+              callback(403,{'Error' : 'Missing or Invalid Token in header'});
+            }
+          })      
     } else {
       callback(400,{'Error' : 'Missing fields to update'});
     }
   } else {
     callback(400,{'Error' : 'Missing required field'});
   }
-
 }
 
 // Users - DELETE
