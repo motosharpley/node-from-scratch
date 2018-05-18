@@ -37,19 +37,29 @@ handlers._users = {};
 // Users - GET
 // Required data: phone
 // Optional data: none
-// @TODO only let an authenticated user access thier object
+
 handlers._users.get = function(data,callback){
   // Check that phone number is valid
   const phone = typeof(data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
   if(phone){
-    // Lookup the user
-    _data.read('users',phone,function(err,data){
-      if(!err && data){
-        // Remove hashed password from user object before returning request
-        delete data.hashedPassword;
-        callback(200,data);
+
+    // Get the token from the headers
+    const token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+    // Verify that the given token is valid for current phone number
+    handlers._tokens.verifyToken(token,phone,function(tokenIsValid){
+      if(tokenIsValid){
+        // Lookup the user
+        _data.read('users',phone,function(err,data){
+          if(!err && data){
+            // Remove hashed password from user object before returning request
+            delete data.hashedPassword;
+            callback(200,data);
+          } else {
+            callback(404);
+          }
+        })
       } else {
-        callback(404);
+        callback(403,{'Error' : 'Missing or Invalid Token in header'});
       }
     })
   } else {
