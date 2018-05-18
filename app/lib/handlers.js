@@ -216,24 +216,6 @@ handlers._users.delete = function(data,callback){
   }
 }
 
-// Verify if token id is valid for current user
-handlers._tokens.verifyToken = function(id,phone,callback){
-  // Lookup the token
-  _data.read('tokens',id,function(err,tokenData){
-    if(!err && tokenData){
-      // Check that token is for the given user and is not expired
-      if(tokenData.phone == phone && tokenData.expires > Date.now()){
-        callback(true);
-      } else {
-        callback(false);
-      }
-    } else {
-      callback(false);
-    }
-  })
-}
-
-
 /*
 * START OF TOKENS HANDLERS
 */
@@ -372,6 +354,23 @@ handlers._tokens.delete = function(data,callback){
   } else {
     callback(400,{'Error' : 'Missing required field'});
   }
+}
+
+// Verify if token id is valid for current user
+handlers._tokens.verifyToken = function(id,phone,callback){
+  // Lookup the token
+  _data.read('tokens',id,function(err,tokenData){
+    if(!err && tokenData){
+      // Check that token is for the given user and is not expired
+      if(tokenData.phone == phone && tokenData.expires > Date.now()){
+        callback(true);
+      } else {
+        callback(false);
+      }
+    } else {
+      callback(false);
+    }
+  })
 }
 
 // Export Handlers Module
