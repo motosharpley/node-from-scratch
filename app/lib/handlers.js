@@ -425,7 +425,7 @@ handlers._checks.get = function(data,callback){
 }
 
 // Checks - post
-// Required data : protocol, url, method, successCodes, timeoutSeconds
+// Required data: protocol, url, method, successCodes, timeoutSeconds
 // Optional data: none
 handlers._checks.post = function(data,callback){
   // validate inputs
@@ -500,10 +500,75 @@ handlers._checks.post = function(data,callback){
   }
 }
 
+// Checks - put
+// Required data: id
+// Optional data: protocol, url, method, successCodes, timeoutSeconds (at least one must be sent)
 handlers._checks.put = function(data,callback){
+    // Check for the required field
+    const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 20 ? data.payload.id.trim() : false;
 
+    // Check for the optional field
+    const protocol = typeof(data.payload.protocol) == 'string' && ['https', 'http'].indexOf(data.payload.protocol) > -1 ? data.payload.protocol : false;
+    const url = typeof(data.payload.url) == 'string' && data.payload.url.trim().length > 0 ? data.payload.url.trim() : false;
+    const method = typeof(data.payload.method) == 'string' && ['get', 'post', 'put', 'delete'].indexOf(data.payload.method) > -1 ? data.payload.method : false;
+    const successCodes = typeof(data.payload.successCodes) == 'object' && data.payload.successCodes instanceof Array && data.payload.successCodes.length > 0 ? data.payload.successCodes : false;
+    const timeoutSeconds = typeof(data.payload.timeoutSeconds) == 'number' && data.payload.timeoutSeconds % 1 === 0 && data.payload.timeoutSeconds >= 1 && data.payload.timeoutSeconds <= 5 ? data.payload.timeoutSeconds : false;
+  
+  // Check to make sure id is valid
+  if(id){
+    // Check to make sure one or more optional fields has been sent
+    if(protocol || url || method || successCodes || timeoutSeconds){
+      // Lookup the check
+      _data.read('checks',id,function(err,checkData){
+        if(!err && checkData){
+          // Get the token from the headers
+          const token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+          // Verify that the given token is valid and belongs to the user who created the check
+          handlers._tokens.verifyToken(token,checkData.userPhone,function(tokenIsValid){
+            if(tokenIsValid){
+              // Update the check where necessary
+              if(protocol){
+                checkData.protocol = protocol;
+              }
+              if(url){
+                checkData.url = url;
+              }
+              if(method){
+                checkData.method = method;
+              }
+              if(successCodes){
+                checkData.successCodes = successCodes;
+              }
+              if(timeoutSeconds){
+                checkData.timeoutSeconds = timeoutSeconds;
+              }
+              // Store the updates 
+              _data.update('checks',id,checkData,function(err){
+                if(!err){
+                  callback(200);
+                } else {
+                  callback(500,{'Error' : 'Could not update the check'});
+                }
+              })
+            } else {
+              callback(403);
+            }
+          })
+        } else {
+          callback(400,{'Error' : 'Check ID did not exist'});
+        }
+      })
+    } else {
+      callback(400,{'Error' : 'Missing fields to update'});
+    }
+  } else {
+    callback(400,{'Error' : 'Missing required field'});
+  }
 }
 
+// Checks - delete
+// Required data: 
+// Optional data: 
 handlers._checks.delete = function(data,callback){
 
 }
