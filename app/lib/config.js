@@ -11,7 +11,8 @@ environment.development = {
   'httpPort' : 3000,
   'httpsPort' : 3001,
   'envName' : 'development',
-  'hashingSecret' : 'InsertHashSecret'
+  'hashingSecret' : 'InsertHashSecret',
+  'maxChecks' : 5
 }
 
 // Production environment
@@ -19,7 +20,8 @@ environment.production = {
   'httpPort' : 5000,
   'httpsPort' : 5001,
   'envName' : 'production',
-  'hashingSecret' : 'InsertProdHashSecret'
+  'hashingSecret' : 'InsertProdHashSecret',
+  'maxChecks' : 5
 }
 
 // Determine what environment is passed
