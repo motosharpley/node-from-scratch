@@ -404,7 +404,6 @@ handlers._checks.get = function(data,callback){
     // Lookup the check 
     _data.read('checks',id,function(err,checkData){
       if(!err && checkData){
-
       // Get the token from the headers
       const token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
       // Verify that the given token is valid and belongs to the user who created the check
@@ -416,12 +415,10 @@ handlers._checks.get = function(data,callback){
           callback(403);
         }
       })
-
       } else {
         callback(404);
       }
     })
-
   } else {
     callback(400,{'Error' : 'Missing required field'});
   }
