@@ -393,14 +393,43 @@ handlers.checks = function(data,callback){
 // Container for arll checks methods
 handlers._checks = {};
 
+// Checks - get
+// Required data: id
+// Optional data: none
+handlers._checks.get = function(data,callback){
+  // Check that id is valid
+  const id = typeof(data.queryStringObject.id) == 'string' && data.queryStringObject.id.trim().length == 20 ? data.queryStringObject.id.trim() : false;
+  if(id){
+
+    // Lookup the check 
+    _data.read('checks',id,function(err,checkData){
+      if(!err && checkData){
+
+      // Get the token from the headers
+      const token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+      // Verify that the given token is valid and belongs to the user who created the check
+      handlers._tokens.verifyToken(token,checkData.userPhone,function(tokenIsValid){
+        if(tokenIsValid){
+          // Return the check data
+          callback(200,checkData);
+        } else {
+          callback(403);
+        }
+      })
+
+      } else {
+        callback(404);
+      }
+    })
+
+  } else {
+    callback(400,{'Error' : 'Missing required field'});
+  }
+}
+
 // Checks - post
 // Required data : protocol, url, method, successCodes, timeoutSeconds
 // Optional data: none
-
-handlers._checks.get = function(data,callback){
-
-}
-
 handlers._checks.post = function(data,callback){
   // validate inputs
   const protocol = typeof(data.payload.protocol) == 'string' && ['https', 'http'].indexOf(data.payload.protocol) > -1 ? data.payload.protocol : false;
