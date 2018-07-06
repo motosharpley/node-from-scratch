@@ -17,6 +17,11 @@ const helpers = require('./lib/helpers');
 // TESTING DATA 
 // @TODO delete this when done
 
+// testing the twilio helper 
+// helpers.sendTwilioSms('4058675309', 'Hello Twilio!', function(err){
+//   console.log('this is the twilio err', err);
+// })
+
 // Create Test
 // _data.create('test','newFile',{'myKey' : 'My value'},function(err){
 //   console.log('encountered the following error',err);
