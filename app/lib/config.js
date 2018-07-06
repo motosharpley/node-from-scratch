@@ -12,7 +12,12 @@ environment.development = {
   'httpsPort' : 3001,
   'envName' : 'development',
   'hashingSecret' : 'InsertHashSecret',
-  'maxChecks' : 5
+  'maxChecks' : 5,
+  'twilio' : {
+    'accountSid' : 'ACb32d411ad7fe886aac54c665d25e5c5d',
+    'authToken' : '9455e3eb3109edc12e3d8c92768f7a67',
+    'fromPhone' : '+15005550006'
+  }
 }
 
 // Production environment
@@ -21,7 +26,12 @@ environment.production = {
   'httpsPort' : 5001,
   'envName' : 'production',
   'hashingSecret' : 'InsertProdHashSecret',
-  'maxChecks' : 5
+  'maxChecks' : 5,
+  'twilio' : {
+    'accountSid' : '',
+    'authToken' : '',
+    'fromPhone' : ''
+  }
 }
 
 // Determine what environment is passed
