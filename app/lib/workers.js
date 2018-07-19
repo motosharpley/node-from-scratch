@@ -16,6 +16,7 @@ const workers = {};
 
 // Lookup all checks, get the data, send to validator
 workers.getAllChecks = function(){
+  // Get all the checks
   _data.list('checks',function(err,checks){
     if(!err && checks && checks.length > 0){
       checks.forEach(function(check){
@@ -33,6 +34,15 @@ workers.getAllChecks = function(){
       console.error('Error: Could not find any checks to process');
     }
   })
+}
+
+// Sanity-check the check-data
+workers.validateCheckData = function(originalCheckData){
+  originalCheckData = typeof(originalCheckData) == 'object' && originalCheckData !== null ? originalCheckData : {};
+  originalCheckData.id = typeof(originalCheckData.id) == 'string' && originalCheckData.id.trim().length == 20 ? originalCheckData.id.trim() : false;
+  originalCheckData.userPhone = typeof(originalCheckData.userPhone) == 'string' && originalCheckData.userPhone.trim().length == 10 ? originalCheckData.userPhone.trim() : false;
+  originalCheckData.protocol = typeof(originalCheckData.protocol) == 'string' && ['http','https'].indexOf(originalCheckData.protocol) > -1 ? originalCheckData.protocol : false;
+// @@@@TODO finish this===============================================
 }
 
 // Tier to execute the worker-process once per minute
