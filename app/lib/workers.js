@@ -42,8 +42,25 @@ workers.validateCheckData = function(originalCheckData){
   originalCheckData.id = typeof(originalCheckData.id) == 'string' && originalCheckData.id.trim().length == 20 ? originalCheckData.id.trim() : false;
   originalCheckData.userPhone = typeof(originalCheckData.userPhone) == 'string' && originalCheckData.userPhone.trim().length == 10 ? originalCheckData.userPhone.trim() : false;
   originalCheckData.protocol = typeof(originalCheckData.protocol) == 'string' && ['http','https'].indexOf(originalCheckData.protocol) > -1 ? originalCheckData.protocol : false;
-// @@@@TODO finish this===============================================
+  originalCheckData.url = typeof(originalCheckData.url) == 'string' && originalCheckData.url.trim().length > 0 ? originalCheckData.url.trim() : false;
+  originalCheckData.method = typeof(originalCheckData.method) == 'string' && ['get','post','put','delete'].indexOf(originalCheckData.method) > -1 ? originalCheckData.method : false;
+  originalCheckData.successCode = typeof(originalCheckData.successCode) == 'object' && originalCheckData.successCode instanceof Array && originalCheckData.successCode.length > 0 ? originalCheckData.successCode : false;
+  originalCheckData.timeoutSeconds = typeof(originalCheckData.timeoutSeconds) == 'number' && originalCheckData.timeoutSeconds % 1 === 0 && originalCheckData.timeoutSeconds >= 1 && originalCheckData.timeoutSeconds <=5 ? originalCheckData.timeoutSeconds : false;
+
+  // Set keys that may not be set if workers have not seen this check before
+  originalCheckData.state = typeof(originalCheckData.state) == 'string' && ['up','down'].indexOf(originalCheckData.state) > -1 ? originalCheckData.state : 'down';
+  originalCheckData.lastChecked = typeof(originalCheckData.lastChecked) == 'number' && originalCheckData.lastChecked > 0 ? originalCheckData.lastChecked : false;
+
+  // If all checks pass, then pass data to the next step in the process
+  if(originalCheckData.id && originalCheckData.userPhone && originalCheckData.protocol && originalCheckData.url && originalCheckData.method && originalCheckData.successCode && originalCheckData.timeoutSeconds){
+    workers.performCheck(originalCheckData);
+  } else {
+    console.error('Error: One of the checks is not properly formatted. Skipping it!');
+  }
 }
+
+// Perform the check, send the originalCheckData and the chekc outcome to the next step of the process
+// @@@TODO build out this function ***********************************************
 
 // Tier to execute the worker-process once per minute
 workers.loop = function(){
