@@ -44,7 +44,7 @@ workers.validateCheckData = function (originalCheckData) {
   originalCheckData.protocol = typeof (originalCheckData.protocol) == 'string' && ['http', 'https'].indexOf(originalCheckData.protocol) > -1 ? originalCheckData.protocol : false;
   originalCheckData.url = typeof (originalCheckData.url) == 'string' && originalCheckData.url.trim().length > 0 ? originalCheckData.url.trim() : false;
   originalCheckData.method = typeof (originalCheckData.method) == 'string' && ['get', 'post', 'put', 'delete'].indexOf(originalCheckData.method) > -1 ? originalCheckData.method : false;
-  originalCheckData.successCode = typeof (originalCheckData.successCode) == 'object' && originalCheckData.successCode instanceof Array && originalCheckData.successCode.length > 0 ? originalCheckData.successCode : false;
+  originalCheckData.successCodes = typeof (originalCheckData.successCodes) == 'object' && originalCheckData.successCodes instanceof Array && originalCheckData.successCodes.length > 0 ? originalCheckData.successCodes : false;
   originalCheckData.timeoutSeconds = typeof (originalCheckData.timeoutSeconds) == 'number' && originalCheckData.timeoutSeconds % 1 === 0 && originalCheckData.timeoutSeconds >= 1 && originalCheckData.timeoutSeconds <= 5 ? originalCheckData.timeoutSeconds : false;
 
   // Set keys that may not be set if workers have not seen this check before
@@ -52,7 +52,7 @@ workers.validateCheckData = function (originalCheckData) {
   originalCheckData.lastChecked = typeof (originalCheckData.lastChecked) == 'number' && originalCheckData.lastChecked > 0 ? originalCheckData.lastChecked : false;
 
   // If all checks pass, then pass data to the next step in the process
-  if (originalCheckData.id && originalCheckData.userPhone && originalCheckData.protocol && originalCheckData.url && originalCheckData.method && originalCheckData.successCode && originalCheckData.timeoutSeconds) {
+  if (originalCheckData.id && originalCheckData.userPhone && originalCheckData.protocol && originalCheckData.url && originalCheckData.method && originalCheckData.successCodes && originalCheckData.timeoutSeconds) {
     workers.performCheck(originalCheckData);
   } else {
     console.error('Error: One of the checks is not properly formatted. Skipping it!');
@@ -127,6 +127,38 @@ workers.performCheck = function (originalCheckData) {
   req.end();
 
 }
+
+// Process the check outcome, update the data as needed, trigger an alert to user if needed
+// Special logic for a check that has never been tested before (don't alert on that one)
+
+workers.processCheckOutcome = function(originalCheckData,checkOutcome){
+  // Decide if the check is considered up or down
+  let state = !checkOutcome.error && checkOutcome.responseCode && originalCheckData.successCodes.indexOf(checkOutcome.responseCode) > -1 ? 'up' : 'down';
+
+  // Decide if an alert is warranted
+  let alertWarranted = originalCheckData.lastChecked && originalCheckData.state !== state ? true : false;
+
+  // Update the check data
+  let newCheckData = originalCheckData;
+  newCheckData.state = state;
+  newCheckData.lastChecked = Date.now();
+
+  // Save the updates
+  _data.update('checks',newCheckData.id,newCheckData,function(err){
+    if(!err){
+      // Send the new check data to the next phase in the process if needed
+      if(alertWarranted){
+        workers.alertUserToStatusChange(newCheckData);
+      } else {
+        console.log('Check outcome has not changed, no alert needed')
+      }
+
+    } else {
+      console.error('Error trying to save updates to one of the checks');
+    }
+  })
+}
+
 
 // Tier to execute the worker-process once per minute
 workers.loop = function () {
