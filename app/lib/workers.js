@@ -68,7 +68,7 @@ workers.performCheck = function (originalCheckData) {
   };
 
   // Mark the outcome has not been sent yet
-  const outcomeSent = false;
+  let outcomeSent = false;
 
   // Parse the hostname and the path from the originalCheckData
   const parsedUrl = url.parse(originalCheckData.protocol + '://' + originalCheckData.url, true);
@@ -159,6 +159,18 @@ workers.processCheckOutcome = function(originalCheckData,checkOutcome){
   })
 }
 
+// Alert User to change in their check status
+workers.alertUserToStatusChange = function(newCheckData){
+  let msg ='Alert: Your check for '+newCheckData.method.toUpperCase()+' '+newCheckData.protocol+'://'+newCheckData.url+' is currently '+newCheckData.state;
+  helpers.sendTwilioSms(newCheckData.userPhone,msg,function(err){
+    if(!err){
+      console.log('Success: User was successfully alerted to status change in their check via sms',msg);
+    } else {
+      console.error('Could not send sms alert to user');
+    }
+  })
+}
+
 
 // Tier to execute the worker-process once per minute
 workers.loop = function () {
@@ -175,3 +187,6 @@ workers.init = function () {
   // Call the loop so the checks will execute later
   workers.loop();
 }
+
+// Export the workers module 
+module.exports = workers;
