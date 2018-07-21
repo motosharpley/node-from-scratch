@@ -38,6 +38,28 @@ lib.append = function(file,str,callback){
   });
 }
 
+// List all the logs, and optionally include compressed logs
+lib.list = function(includeCompressedLogs,callback){
+  fs.readdir(lib.baseDir,function(err,data){
+    if(!err && data && data.length > 0){
+      let trimmedFileNames = [];
+      data.forEach(function(fileName){
+        // Add the .log files
+        if(fileName.indexOf('.log') > -1){
+          trimmedFileNames.push(fileName.replace('.log',''));
+        }
+
+        // Add on the .gz files
+        if(fileName.indexOf('.gz.b64') > -1 && includeCompressedLogs){
+          trimmedFileNames.push(fileName.replace('.gz.b64',''));
+        }
+      });
+      callback(false,trimmedFileNames);
+    } else {
+      callback(err,data);
+    }
+  });
+}
 
 
 
