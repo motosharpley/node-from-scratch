@@ -9,6 +9,7 @@ const https = require('https');
 const http = require('http');
 const helpers = require('./helpers');
 const url = require('url');
+const _logs = require('./logs');
 
 
 //  Instantiate the worker
@@ -138,11 +139,15 @@ workers.processCheckOutcome = function(originalCheckData,checkOutcome){
   // Decide if an alert is warranted
   let alertWarranted = originalCheckData.lastChecked && originalCheckData.state !== state ? true : false;
 
+  // Log the outcome
+  let timeOfCheck = Date.now();
+  workers.log(originalCheckData,checkOutcome,state,alertWarranted,timeOfCheck);
+
   // Update the check data
   let newCheckData = originalCheckData;
   newCheckData.state = state;
-  newCheckData.lastChecked = Date.now();
-
+  newCheckData.lastChecked = timeOfCheck;
+  
   // Save the updates
   _data.update('checks',newCheckData.id,newCheckData,function(err){
     if(!err){
@@ -167,6 +172,32 @@ workers.alertUserToStatusChange = function(newCheckData){
       console.log('Success: User was successfully alerted to status change in their check via sms',msg);
     } else {
       console.error('Could not send sms alert to user');
+    }
+  })
+}
+
+workers.log = function(originalCheckData,checkOutcome,state,alertWarranted,timeOfCheck){
+  // Form the log data
+  const logData = {
+    'check' : originalCheckData,
+    'outcome' : checkOutcome,
+    'state' : state,
+    'alert' : alertWarranted,
+    'time' : timeOfCheck
+  };
+
+  // Convert data to a string
+  const logString = JSON.stringify(logData);
+
+  // Determine the name of the log file
+  const logFileName = originalCheckData.id;
+
+  // Append the log string to the file
+  _logs.append(logFileName,logString,function(err){
+    if(!err){
+      console.log('Logging to file was successful');
+    } else {
+      console.log('Failed to logg to file');
     }
   })
 }
