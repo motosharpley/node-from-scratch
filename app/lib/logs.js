@@ -61,6 +61,48 @@ lib.list = function(includeCompressedLogs,callback){
   });
 }
 
+// Compress the contents of one .log file into a .gz.b64 file within the same directory
+lib.compress = function(logId,newFileId,callback){
+  let sourceFile = logId+'.log';
+  let destFile = newFileId+'.gz.b64';
+
+  // read the source file
+  fs.readFile(lib.baseDir+sourceFile,'utf8',function(err,inputString){
+    if(!err && inputString){
+      // Compress the data using gzip
+      zlib.gzip(inputString,function(err,buffer){
+        if(!err && buffer){
+          // Send the data to destination file
+          fs.open(lib.baseDir+destFile+'wx',function(err,fileDescriptor){
+            if(!err && fileDescriptor){
+              // Write to the destination file
+              fs.writeFile(fileDescriptor,buffer.toString('base64',function(err){
+                if(!err){
+                  // Close the destination file
+                  fs.close(fileDescriptor,function(err){
+                    if(!err){
+                      callback(false);
+                    } else {
+                      callback(err);
+                    }
+                  })
+                } else {
+                  callback(err);
+                }
+              }))
+            } else {
+              callback(err);
+            }
+          })
+        } else {
+          callback(err);
+        }
+      })
+    } else {
+      callback(err);
+    }
+  })
+}
 
 
 
