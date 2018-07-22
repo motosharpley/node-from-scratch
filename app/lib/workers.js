@@ -105,7 +105,7 @@ workers.performCheck = function (originalCheckData) {
       'error': true,
       'value': e
     }
-    if(!outcomeSent){
+    if (!outcomeSent) {
       workers.processCheckOutcome(originalCheckData, checkOutcome);
       outcomeSent = true;
     }
@@ -118,7 +118,7 @@ workers.performCheck = function (originalCheckData) {
       'error': true,
       'value': 'timeout'
     }
-    if(!outcomeSent){
+    if (!outcomeSent) {
       workers.processCheckOutcome(originalCheckData, checkOutcome);
       outcomeSent = true;
     }
@@ -132,7 +132,7 @@ workers.performCheck = function (originalCheckData) {
 // Process the check outcome, update the data as needed, trigger an alert to user if needed
 // Special logic for a check that has never been tested before (don't alert on that one)
 
-workers.processCheckOutcome = function(originalCheckData,checkOutcome){
+workers.processCheckOutcome = function (originalCheckData, checkOutcome) {
   // Decide if the check is considered up or down
   let state = !checkOutcome.error && checkOutcome.responseCode && originalCheckData.successCodes.indexOf(checkOutcome.responseCode) > -1 ? 'up' : 'down';
 
@@ -141,18 +141,18 @@ workers.processCheckOutcome = function(originalCheckData,checkOutcome){
 
   // Log the outcome
   let timeOfCheck = Date.now();
-  workers.log(originalCheckData,checkOutcome,state,alertWarranted,timeOfCheck);
+  workers.log(originalCheckData, checkOutcome, state, alertWarranted, timeOfCheck);
 
   // Update the check data
   let newCheckData = originalCheckData;
   newCheckData.state = state;
   newCheckData.lastChecked = timeOfCheck;
-  
+
   // Save the updates
-  _data.update('checks',newCheckData.id,newCheckData,function(err){
-    if(!err){
+  _data.update('checks', newCheckData.id, newCheckData, function (err) {
+    if (!err) {
       // Send the new check data to the next phase in the process if needed
-      if(alertWarranted){
+      if (alertWarranted) {
         workers.alertUserToStatusChange(newCheckData);
       } else {
         console.log('Check outcome has not changed, no alert needed')
@@ -165,25 +165,25 @@ workers.processCheckOutcome = function(originalCheckData,checkOutcome){
 }
 
 // Alert User to change in their check status
-workers.alertUserToStatusChange = function(newCheckData){
-  let msg ='Alert: Your check for '+newCheckData.method.toUpperCase()+' '+newCheckData.protocol+'://'+newCheckData.url+' is currently '+newCheckData.state;
-  helpers.sendTwilioSms(newCheckData.userPhone,msg,function(err){
-    if(!err){
-      console.log('Success: User was successfully alerted to status change in their check via sms',msg);
+workers.alertUserToStatusChange = function (newCheckData) {
+  let msg = 'Alert: Your check for ' + newCheckData.method.toUpperCase() + ' ' + newCheckData.protocol + '://' + newCheckData.url + ' is currently ' + newCheckData.state;
+  helpers.sendTwilioSms(newCheckData.userPhone, msg, function (err) {
+    if (!err) {
+      console.log('Success: User was successfully alerted to status change in their check via sms', msg);
     } else {
       console.error('Could not send sms alert to user');
     }
   })
 }
 
-workers.log = function(originalCheckData,checkOutcome,state,alertWarranted,timeOfCheck){
+workers.log = function (originalCheckData, checkOutcome, state, alertWarranted, timeOfCheck) {
   // Form the log data
   const logData = {
-    'check' : originalCheckData,
-    'outcome' : checkOutcome,
-    'state' : state,
-    'alert' : alertWarranted,
-    'time' : timeOfCheck
+    'check': originalCheckData,
+    'outcome': checkOutcome,
+    'state': state,
+    'alert': alertWarranted,
+    'time': timeOfCheck
   };
 
   // Convert data to a string
@@ -193,8 +193,8 @@ workers.log = function(originalCheckData,checkOutcome,state,alertWarranted,timeO
   const logFileName = originalCheckData.id;
 
   // Append the log string to the file
-  _logs.append(logFileName,logString,function(err){
-    if(!err){
+  _logs.append(logFileName, logString, function (err) {
+    if (!err) {
       console.log('Logging to file was successful');
     } else {
       console.log('Failed to logg to file');
@@ -211,33 +211,33 @@ workers.loop = function () {
 }
 
 // Rotate (compress) the log files
-workers.rotateLogs = function(){
+workers.rotateLogs = function () {
   // List all the (non compressed) log files
-  _logs.list(false,function(err,logs){
-    if(!err && logs && logs.length > 0){
-      logs.forEach(function(logName){
+  _logs.list(false, function (err, logs) {
+    if (!err && logs && logs.length > 0) {
+      logs.forEach(function (logName) {
         // Compress the data to a different file
-        let logId = logName.replace('.log','');
-        let newFileId = logId+'-'+Date.now();
-        _logs.compress(logId,newFileId,function(err){
-          if(!err){
+        let logId = logName.replace('.log', '');
+        let newFileId = logId + '-' + Date.now();
+        _logs.compress(logId, newFileId, function (err) {
+          if (!err) {
             // Truncate the log
-            _logs.truncate(logId,function(err){
-              if(!err){
+            _logs.truncate(logId, function (err) {
+              if (!err) {
                 console.log('Success truncating log file');
               } else {
                 console.error('Error truncating log file');
               }
-            })
+            });
           } else {
-            console.error('Error compressing one of the log files',err);
+            console.error('Error compressing one of the log files', err);
           }
         })
       });
     } else {
       console.error('Error : could not find any logs to rotate');
     }
-  })
+  });
 }
 
 // Timer to execute the log rotation process once daily
