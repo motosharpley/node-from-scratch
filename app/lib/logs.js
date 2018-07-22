@@ -104,6 +104,28 @@ lib.compress = function(logId,newFileId,callback){
   })
 }
 
+// Decompress the contents of a .gz.b64 file into a string variable
+lib.decompress = function(fileId,callback){
+  let fileName = fileId+'.gz.b64';
+  fs.readFile(lib.baseDir+fileName,'utf8',function(err,str){
+    if(!err && str){
+      // Decompress the data
+      let inputBuffer = Buffer.from(str,'base64');
+      zlib.unzip(inputBuffer,function(err,outputBuffer){
+        if(!err && outputBuffer){
+          // Callback
+          let str = outputBuffer.toString();
+          callback(false,str);
+        } else {
+          callback(err);
+        }
+      });
+    } else {
+      callback(err);
+    }
+  });
+}
+
 
 
 
