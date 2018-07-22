@@ -73,10 +73,10 @@ lib.compress = function(logId,newFileId,callback){
       zlib.gzip(inputString,function(err,buffer){
         if(!err && buffer){
           // Send the data to destination file
-          fs.open(lib.baseDir+destFile+'wx',function(err,fileDescriptor){
+          fs.open(lib.baseDir+destFile,'wx',function(err,fileDescriptor){
             if(!err && fileDescriptor){
               // Write to the destination file
-              fs.writeFile(fileDescriptor,buffer.toString('base64',function(err){
+              fs.writeFile(fileDescriptor,buffer.toString('base64'),function(err){
                 if(!err){
                   // Close the destination file
                   fs.close(fileDescriptor,function(err){
@@ -89,7 +89,7 @@ lib.compress = function(logId,newFileId,callback){
                 } else {
                   callback(err);
                 }
-              }))
+              })
             } else {
               callback(err);
             }
