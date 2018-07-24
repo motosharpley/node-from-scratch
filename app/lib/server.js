@@ -108,17 +108,28 @@ server.unifiedServer = function(req,res){
     }
 
     // route the request specified in the router
-    chooseHandler(data,function(statusCode, payload){
+    chooseHandler(data,function(statusCode, payload,contentType){
+      // Determine the type of response (fallback to JSON)
+      contentType = typeof(contentType) == 'string' ? contentType : 'json';
+
       // Use the status code called back by the handler, or default to 200
-      statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
+      statusCode = typeof(statusCode) == 'number' ? statusCode : 200;      
+
+      // Return the response with content specific items 
+      let payloadString = '';
+      if(contentType == 'json'){
+        res.setHeader('Content-Type','application/json');
+        // Use the paylod called back by the handler, or default to an empty object
+        payload = typeof(payload) == 'object' ? payload : {};
+        payloadString = JSON.stringify(payload);
+      }
+      if(contentType == 'html'){
+        res.setHeader('Content-Type','text/html');
+        payloadString = typeof(payload) == 'string' ? payload : '';
+
+      }
       
-      // Use the paylod called back by the handler, or default to an empty object
-      payload = typeof(payload) == 'object' ? payload : {};
-
-      const payloadString = JSON.stringify(payload);
-
-      // Send the response
-      res.setHeader('Content-Type','application/json');
+      // Return the response items that are common to all content types
       res.writeHead(statusCode);
       res.end(payloadString);
 
