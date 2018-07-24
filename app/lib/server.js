@@ -134,10 +134,19 @@ server.unifiedServer = function(req,res){
 
 // Define a request router
 server.router = {
+  '' : handlers.index,
+  'account/create' : handlers.accountCreate,
+  'account/edit' : handlers.accountEdit,
+  'account/deleted' : handlers.accountDeleted,
+  'session/create' : handlers.sessionCreate,
+  'session/deleted' : handlers.sessinDeleted,
+  'checks/all' : handlers.checksList,
+  'checks/create' : handlers.checksCreate,
+  'checks/edit' : handlers.checksEdit,
   'ping' : handlers.ping,
-  'users' : handlers.users,
-  'tokens' : handlers.tokens,
-  'checks' : handlers.checks
+  'api/users' : handlers.users,
+  'api/tokens' : handlers.tokens,
+  'api/checks' : handlers.checks
 }
 
 // Init script
