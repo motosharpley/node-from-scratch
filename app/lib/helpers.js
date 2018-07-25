@@ -135,6 +135,30 @@ helpers.getTemplate = function(templateName,callback){
 }
 
 
+// Take a given string and data object and find/replace all keys within it
+helpers.interpolate = function(str,data){
+  str = typeof(str) == 'string' && str.length > 0 ? str : '';
+  data = typeof(data) == 'object' && data !== null ? data : {};
+
+  // Add the templateGlobals to the data object, prepending their key name with "global"
+  for(let keyName in config.templateGlobals){
+    if(config.templateGlobals.hasOwnProperty(keyName)){
+      data['global.'+keyName] = config.templateGlobals[keyName];
+    }
+  }
+
+  // For each key in the data object insert it's value into the string at the corresponding placeholder
+  for(let key in data){
+    if(data.hasOwnProperty(key) && typeof(data[key]) == 'string'){
+      let replace = data[key];
+      let find = '{'+key+'}';
+      str = str.replace(find,replace);
+    }
+  }
+  return str;
+}
+
+
 
 
 
