@@ -118,13 +118,16 @@ helpers.sendTwilioSms = function(phone,msg,callback){
 
 
 // Get the string content of a template
-helpers.getTemplate = function(templateName,callback){
+helpers.getTemplate = function(templateName,data,callback){
   templateName = typeof(templateName) == 'string' && templateName.length > 0 ? templateName : false;
+  data = typeof(data) == 'object' && data !== null ? data : {};
   if(templateName){
     let templateDir = path.join(__dirname,'/../templates/');
     fs.readFile(templateDir+templateName+'.html','utf8',function(err,str){
       if(!err && str && str.length > 0){
-        callback(false,str);
+        // Do interpolations on the string
+        let finalString = helpers.interpolate(str,data)
+        callback(false,finalString);
       } else {
         callback('No template found');
       }
