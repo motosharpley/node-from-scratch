@@ -137,6 +137,31 @@ helpers.getTemplate = function(templateName,data,callback){
   }
 }
 
+// Add the universal header and footer to a string, and pass the provided data object to the header and footer for interpolation
+helpers.addUniversalTemplates = function(str,data,callback){
+  str = typeof(str) == 'string' && str.length > 0 ? str : '';
+  data = typeof(data) == 'object' && data !== null ? data : {};
+  // Get the header
+  helpers.getTemplate('_header',data,function(err,headerString){
+    if(!err && headerString){
+      // Get the footer
+      helpers.getTemplate('_footer',data,function(err,footerString){
+        if(!err && footerString){
+          // Put them all together
+          let fullString = headerString+str+footerString;
+          callback(false,fullString);
+        } else {
+          callback('Could not find the footer template');
+        }
+      })
+    } else {
+      callback('Could not find the header template');
+    }
+
+  })
+
+}
+
 
 // Take a given string and data object and find/replace all keys within it
 helpers.interpolate = function(str,data){
