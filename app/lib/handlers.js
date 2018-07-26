@@ -31,10 +31,28 @@ handlers.notFound = function(data,callback){
 handlers.index = function(data,callback){
   // Reject any method that is not GET
   if(data.method == 'get'){
+
+    // Prepare data for interpolation
+    let templateData = {
+      'head.title' : 'I am the title',
+      'head.description' : 'You guessed it this is the description',
+      'body.title' : 'Hello world body title',
+      'body.class' : 'index'
+    };
+
+
     // Read in a template as a string
-    helpers.getTemplate('index',function(err,str){
+    helpers.getTemplate('index',templateData,function(err,str){
       if(!err && str){
-        callback(200,str,'html');
+        // Add the universal header and footer
+        helpers.addUniversalTemplates(str,templateData,function(err,str){
+          if(!err && str){
+            // Return that page as HTML
+            callback(200,str,'html');
+          } else {
+            callback(500,undefined,'html');
+          }
+        })
       } else {
         callback(500,undefined,'html');
       }
