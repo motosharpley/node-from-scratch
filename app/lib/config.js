@@ -17,6 +17,12 @@ environment.development = {
     'accountSid' : 'ACb32d411ad7fe886aac54c665d25e5c5d',
     'authToken' : '9455e3eb3109edc12e3d8c92768f7a67',
     'fromPhone' : '+15005550006'
+  },
+  'templateGlobals' : {
+    'appName' : 'Uptime SMS',
+    'companyName' : 'DevPath',
+    'yearCreated' : '2018',
+    'baseUrl' : 'http://localhost:3000/'
   }
 }
 
@@ -31,6 +37,12 @@ environment.production = {
     'accountSid' : '',
     'authToken' : '',
     'fromPhone' : ''
+  },
+  'templateGlobals' : {
+    'appName' : 'Uptime SMS',
+    'companyName' : 'DevPath',
+    'yearCreated' : '2018',
+    'baseUrl' : 'http://localhost:5000/'
   }
 }
 
