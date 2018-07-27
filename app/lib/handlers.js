@@ -62,6 +62,25 @@ handlers.index = function(data,callback){
   }
 }
 
+// Favicon
+handlers.favicon = function(data,callback){
+  // Reject any method that is not GET
+  if(data.method == 'get'){
+    // Read in the favicon's data
+    helpers.getStaticAssets('favicon.ico',function(err,data){
+      if(!err && data){
+        // callback the data
+        callback(200,data,'favicon');
+      } else {
+        callback(500);
+      }
+    })
+
+  } else {
+    callback(405);
+  }
+}
+
 
 /**
  * =============================== JSON API Handlers ===============================
