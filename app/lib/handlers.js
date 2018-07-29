@@ -34,9 +34,9 @@ handlers.index = function(data,callback){
 
     // Prepare data for interpolation
     let templateData = {
-      'head.title' : 'I am the title',
+      'head.title' : 'Uptime Monitoring with SMS Text Alerts.',
       'head.description' : 'You guessed it this is the description',
-      'body.title' : 'Hello world body title',
+      'body.title' : 'Uptime Monitoring with Alerts to your Phone!',
       'body.class' : 'index'
     };
 
