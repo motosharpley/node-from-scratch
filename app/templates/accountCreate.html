@@ -1,0 +1,31 @@
+<h1>Create Your Account</h1>
+<h2>Sign up is easy and only takes a moment</h2>
+
+<div class="formWrapper">
+  <form id="accountCreate" action="/api/users" method="post">
+    <div class="formError"></div>
+    <div class="inputWrapper">
+      <div class="inputLabel">First Name</div>
+      <input type="text" name="firstName" placeholder="First Name">
+    </div>
+    <div class="inputWrapper">
+      <div class="inputLabel">Last Name</div>
+      <input type="text" name="lastName" placeholder="Last Name">
+    </div>
+    <div class="inputWrapper">
+      <div class="inputLabel">Phone Number</div>
+      <input type="text" name="phone" placeholder="(415) 567-8309">
+    </div>
+    <div class="inputWrapper">
+      <div class="inputLabel">Please Choose a Password</div>
+      <input type="password" name="password" placeholder="Please use a secure password">
+    </div>
+    <div class="inputWrapper">
+      <div class="inputLabel">Check to agree to the terms and conditions</div>
+      <input type="checkbox" name="tosAgreement" value="agree">
+    </div>
+    <div class="inputWrapper ctaWrapper">
+      <button type="submit">Get Started</button>
+    </div>
+  </form>
+</div>
