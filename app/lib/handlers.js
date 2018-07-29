@@ -62,6 +62,41 @@ handlers.index = function(data,callback){
   }
 }
 
+// Create Account
+handlers.accountCreate = function(data,callback){
+    // Reject any method that is not GET
+    if(data.method == 'get'){
+
+      // Prepare data for interpolation
+      let templateData = {
+        'head.title' : 'Create an account',
+        'head.description' : 'Sign up is easy and only takes a moment!',
+        'body.class' : 'accountCreate'
+      };
+  
+  
+      // Read in a template as a string
+      helpers.getTemplate('accountCreate',templateData,function(err,str){
+        if(!err && str){
+          // Add the universal header and footer
+          helpers.addUniversalTemplates(str,templateData,function(err,str){
+            if(!err && str){
+              // Return that page as HTML
+              callback(200,str,'html');
+            } else {
+              callback(500,undefined,'html');
+            }
+          })
+        } else {
+          callback(500,undefined,'html');
+        }
+      })
+    } else {
+      callback(405,undefined,'html');
+    }
+  
+}
+
 // Favicon
 handlers.favicon = function(data,callback){
   // Reject any method that is not GET
