@@ -172,7 +172,7 @@ server.router = {
   'account/edit' : handlers.accountEdit,
   'account/deleted' : handlers.accountDeleted,
   'session/create' : handlers.sessionCreate,
-  'session/deleted' : handlers.sessinDeleted,
+  'session/deleted' : handlers.sessionDeleted,
   'checks/all' : handlers.checksList,
   'checks/create' : handlers.checksCreate,
   'checks/edit' : handlers.checksEdit,
