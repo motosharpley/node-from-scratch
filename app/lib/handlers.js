@@ -40,7 +40,6 @@ handlers.index = function(data,callback){
       'body.class' : 'index'
     };
 
-
     // Read in a template as a string
     helpers.getTemplate('index',templateData,function(err,str){
       if(!err && str){
@@ -73,8 +72,7 @@ handlers.accountCreate = function(data,callback){
         'head.title' : 'Create an account',
         'head.description' : 'Sign up is easy and only takes a moment!',
         'body.class' : 'accountCreate'
-      };
-  
+      };  
   
       // Read in a template as a string
       helpers.getTemplate('accountCreate',templateData,function(err,str){
@@ -110,7 +108,6 @@ handlers.sessionCreate = function(data,callback){
       'body.class' : 'sessionCreate'
     };
 
-
     // Read in a template as a string
     helpers.getTemplate('sessionCreate',templateData,function(err,str){
       if(!err && str){
@@ -144,7 +141,6 @@ handlers.sessionDeleted = function(data,callback){
       'body.class' : 'sessionDeleted'
     };
 
-
     // Read in a template as a string
     helpers.getTemplate('sessionDeleted',templateData,function(err,str){
       if(!err && str){
@@ -165,6 +161,40 @@ handlers.sessionDeleted = function(data,callback){
     callback(405,undefined,'html');
   }  
 }
+
+
+// Edit Account
+handlers.accountEdit = function(data,callback){
+  // Reject any method that is not GET
+  if(data.method == 'get'){
+
+    // Prepare data for interpolation
+    let templateData = {
+      'head.title' : 'Account Settings',
+      'body.class' : 'accountEdit'
+    };
+
+    // Read in a template as a string
+    helpers.getTemplate('accountEdit',templateData,function(err,str){
+      if(!err && str){
+        // Add the universal header and footer
+        helpers.addUniversalTemplates(str,templateData,function(err,str){
+          if(!err && str){
+            // Return that page as HTML
+            callback(200,str,'html');
+          } else {
+            callback(500,undefined,'html');
+          }
+        })
+      } else {
+        callback(500,undefined,'html');
+      }
+    })
+  } else {
+    callback(405,undefined,'html');
+  }  
+}
+
 
 
 // Favicon
