@@ -32,7 +32,7 @@ app.client.request = function (headers, path, method, queryStringObject, payload
   for (let queryKey in queryStringObject) {
     if (queryStringObject.hasOwnProperty(queryKey)) {
       counter++;
-      // If at least one query string parameter has already been added, preprend new ones with an ampersand
+      // If at least one query string parameter has already been added, prepend new ones with an ampersand
       if (counter > 1) {
         requestUrl += '&';
       }
@@ -93,7 +93,9 @@ app.bindLogoutButton = function () {
 };
 
 // Log the user out then redirect them
-app.logUserOut = function () {
+app.logUserOut = function(redirectUser){
+  // Set redirectUser to default to true
+  redirectUser = typeof(redirectUser) == 'boolean' ? redirectUser : true;
   // Get the current token id
   let tokenId = typeof (app.config.sessionToken.id) == 'string' ? app.config.sessionToken.id : false;
   // Send the current token to the tokens endpoint to delete it
@@ -105,7 +107,10 @@ app.logUserOut = function () {
     // Set the app.config token as false
     app.setSessionToken(false);
     // Send the user to the logged out page
-    window.location = '/session/deleted';
+    if (redirectUser){
+      window.location = '/session/deleted';
+    }
+    
   });
 };
 
@@ -143,8 +148,11 @@ app.bindForms = function () {
           }
         }
 
+        // If the method is DELETE, the payload should be a queryStringObject instead
+        let queryStringObject = method == 'DELETE' ? payload : {};
+
         // Call the API
-        app.client.request(undefined, path, method, undefined, payload, function (statusCode, responsePayload) {
+        app.client.request(undefined, path, method, queryStringObject, payload, function (statusCode, responsePayload) {
           // Display an error on the form if needed
           if (statusCode !== 200) {
             if (statusCode == 403) {
@@ -205,6 +213,13 @@ app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
   if (formsWithSuccessMessages.indexOf(formId) > -1) {
     document.querySelector("#" + formId + " .formSuccess").style.display = 'block';
   }
+
+   // If the user just deleted their account, redirect them to the account-delete page
+   if(formId == 'accountEdit3'){
+    app.logUserOut(false);
+    window.location = '/account/deleted';
+  }
+
 };
 
 // Get the session token from localstorage and set it in the app.config object
