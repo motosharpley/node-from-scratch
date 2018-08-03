@@ -153,6 +153,10 @@ app.bindForms = function () {
               if(nameOfElement == 'httpmethod'){
                 nameOfElement = 'method';
               }
+              // Create a payload field named "id" if the elements name is actually uid
+              if(nameOfElement == 'uid'){
+                nameOfElement = 'id';
+              }
               // If the element has the class "multiselect" add its value(s) as array elements
               if(classOfElement.indexOf('multiselect') > -1){
                 if(elementIsChecked){
@@ -227,7 +231,7 @@ app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
   }
 
   // If forms saved successfully and they have success messages, show them
-  let formsWithSuccessMessages = ['accountEdit1', 'accountEdit2'];
+  let formsWithSuccessMessages = ['accountEdit1', 'accountEdit2','checksEdit1'];
   if (formsWithSuccessMessages.indexOf(formId) > -1) {
     document.querySelector("#" + formId + " .formSuccess").style.display = 'block';
   }
@@ -240,6 +244,12 @@ app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
 
   // If the user just created a new check successfully, redirect back to the dashboard
   if(formId == 'checksCreate'){
+    window.location = '/checks/all';
+  }
+
+  // If the user just deleted a check, redirect them to the dashboard
+
+  if(formId == 'checksEdit2'){
     window.location = '/checks/all';
   }
 
@@ -335,6 +345,11 @@ app.loadDataOnPage = function () {
   // Logic for dashboard page
   if(primaryClass == 'checksList'){
     app.loadChecksListPage();
+  }
+
+  // Logic for check details page
+  if(primaryClass == 'checksEdit'){
+    app.loadChecksEditPage();
   }
 };
 
@@ -432,6 +447,47 @@ app.loadChecksListPage = function(){
     });
   } else {
     app.logUserOut();
+  }
+};
+
+
+// Load the checks edit page specifically
+app.loadChecksEditPage = function(){
+  // Get the check id from the query string, if none is found then redirect back to dashboard
+  let id = typeof(window.location.href.split('=')[1]) == 'string' && window.location.href.split('=')[1].length > 0 ? window.location.href.split('=')[1] : false;
+  if(id){
+    // Fetch the check data
+    let queryStringObject = {
+      'id' : id
+    };
+    app.client.request(undefined,'api/checks','GET',queryStringObject,undefined,function(statusCode,responsePayload){
+      if(statusCode == 200){
+        // Put the hidden id field into both forms
+        let hiddenIdInputs = document.querySelectorAll("input.hiddenIdInput");
+        for(let i = 0; i < hiddenIdInputs.length; i++){
+            hiddenIdInputs[i].value = responsePayload.id;
+        }
+
+        // Put the data into the top form as values where needed
+        document.querySelector("#checksEdit1 .displayIdInput").value = responsePayload.id;
+        document.querySelector("#checksEdit1 .displayStateInput").value = responsePayload.state;
+        document.querySelector("#checksEdit1 .protocolInput").value = responsePayload.protocol;
+        document.querySelector("#checksEdit1 .urlInput").value = responsePayload.url;
+        document.querySelector("#checksEdit1 .methodInput").value = responsePayload.method;
+        document.querySelector("#checksEdit1 .timeoutInput").value = responsePayload.timeoutSeconds;
+        let successCodeCheckboxes = document.querySelectorAll("#checksEdit1 input.successCodesInput");
+        for(let i = 0; i < successCodeCheckboxes.length; i++){
+          if(responsePayload.successCodes.indexOf(parseInt(successCodeCheckboxes[i].value)) > -1){
+            successCodeCheckboxes[i].checked = true;
+          }
+        }
+      } else {
+        // If the request comes back as something other than 200, redirect back to dashboard
+        window.location = '/checks/all';
+      }
+    });
+  } else {
+    window.location = '/checks/all';
   }
 };
 
