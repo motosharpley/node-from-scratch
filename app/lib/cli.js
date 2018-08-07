@@ -62,6 +62,51 @@ cli.responders.help = function(){
   console.log('You asked for help');
 };
 
+// Exit
+cli.responders.exit = function(){
+  console.log('You asked for exit');
+};
+
+// Stats
+cli.responders.stats = function(){
+  console.log('You asked for stats');
+};
+
+// List Users
+cli.responders.listUsers = function(){
+  console.log('You asked for listUsers');
+};
+
+// More User Info
+cli.responders.moreUserInfo = function(str){
+  console.log('You asked for moreUserInfo',str);
+};
+
+// List Checks
+cli.responders.listChecks = function(str){
+  console.log('You asked for listChecks',str);
+};
+
+// More Check Info
+cli.responders.moreCheckInfo = function(str){
+  console.log('You asked for moreCheckInfo',str);
+};
+
+// List logs
+cli.responders.listLogs = function(){
+  console.log('You asked for listLogs');
+};
+
+// More logs Info
+cli.responders.moreLogInfo = function(str){
+  console.log('You asked for moreLogInfo',str);
+};
+
+
+
+
+
+
 // Input Processor
 cli.processInput = function(str){
   str = typeof(str) == 'string' && str.trim().length > 0 ? str.trim() : false;
