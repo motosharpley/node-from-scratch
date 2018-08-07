@@ -13,6 +13,55 @@ const e = new _events();
 // Instantiate the CLI module object
 const cli = {};
 
+// Input handlers
+e.on('man',function(str){
+  cli.responders.help();
+});
+
+e.on('help',function(str){
+  cli.responders.help();
+});
+
+e.on('exit',function(str){
+  cli.responders.exit();
+});
+
+e.on('stats',function(str){
+  cli.responders.stats();
+});
+
+e.on('list users',function(str){
+  cli.responders.listUsers();
+});
+
+e.on('more user info',function(str){
+  cli.responders.moreUserInfo(str);
+});
+
+e.on('list checks',function(str){
+  cli.responders.listChecks(str);
+});
+
+e.on('more check info',function(str){
+  cli.responders.moreCheckInfo(str);
+});
+
+e.on('list logs',function(str){
+  cli.responders.listLogs();
+});
+
+e.on('more log info',function(str){
+  cli.responders.moreLogInfo(str);
+});
+
+// Responders object
+cli.responders = {};
+
+// Help / Man
+cli.responders.help = function(){
+  console.log('You asked for help');
+};
+
 // Input Processor
 cli.processInput = function(str){
   str = typeof(str) == 'string' && str.trim().length > 0 ? str.trim() : false;
