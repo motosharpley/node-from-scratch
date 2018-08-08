@@ -13,6 +13,7 @@ const os = require('os');
 const v8 = require('v8');
 const _data = require('./data');
 const _logs = require('./logs');
+const helpers = require('./helpers');
 
 // Instantiate the CLI module object
 const cli = {};
@@ -287,7 +288,26 @@ cli.responders.listLogs = function(){
 
 // More logs Info
 cli.responders.moreLogInfo = function(str){
-  console.log('You asked for moreLogInfo',str);
+    // Get the logFileName from the string
+    let arr = str.split('--');
+    let logFileName = typeof(arr[1]) == 'string' && arr[1].trim().length > 0 ? arr[1].trim() : false;
+    if(logFileName){
+      cli.verticalSpace();
+      // Decompress the log file
+      _logs.decompress(logFileName,function(err,strData){
+        if(!err && strData){
+          // Slit into lines
+          let arr = strData.split('\n');
+          arr.forEach(function(jsonString){
+            let logObject = helpers.parseJsonToObject(jsonString);
+            if(logObject && JSON.stringify(logObject) !== '{}'){
+              console.dir(logObject,{'colors' : true});
+              cli.verticalSpace();
+            }
+          });
+        }
+      });
+    }
 };
 
 
