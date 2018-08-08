@@ -9,6 +9,7 @@ const debug = util.debuglog('cli');
 const events = require('events');
 class _events extends events{};
 const e = new _events();
+const os = require('os');
 
 // Instantiate the CLI module object
 const cli = {};
@@ -146,14 +147,14 @@ cli.responders.exit = function(){
 cli.responders.stats = function(){
   // Compile an object of stats
   let stats = {
-    'Load Average' : '',
-    'CPU Count' : '',
-    'Free Memory' : '',
+    'Load Average' : os.loadavg().join(' '),
+    'CPU Count' : os.cpus().length,
+    'Free Memory' : os.freemem(),
     'Current Malloced Memory' : '',
     'Peak Malloced Memory' : '',
     'Allocated Heap Used (%)' : '',
     'Available Heap Allocated (%)' : '',
-    'Uptime' : ''
+    'Uptime' : os.uptime()+' Seconds'
   };
 
   // Create a header for the stats
