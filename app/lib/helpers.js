@@ -16,6 +16,11 @@ const fs = require('fs');
 // Containter for helpers
 const helpers = {};
 
+// Sample for testing that just returns a number
+helpers.getNumber = function(){
+  return 33;
+}
+
 //  Create a SHA526 hash
 helpers.hash = function(str){
   if(typeof(str) == 'string' && str.length > 0){
