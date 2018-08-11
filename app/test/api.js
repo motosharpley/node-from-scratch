@@ -57,5 +57,13 @@ api['/api/users should respond to GET with 400'] = function(done){
   });
 };
 
+// Make a request to random path
+api['/api/users should respond to GET with 404'] = function(done){
+  helpers.makeGetRequest('/this/path/should/404',function(res){
+    assert.equal(res.statusCode,404);
+    done();
+  });
+};
+
 // Export tests to the runner
 module.exports = api;
