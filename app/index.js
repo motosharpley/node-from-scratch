@@ -24,10 +24,13 @@ app.init = function(callback) {
     cli.init();
     callback();
   },50);
-}
+};
 
-// Execute
-app.init();
+// Self invoking only if required directly
+if(require.main === module){
+  app.init(function(){});
+};
+
 
 // Export the app
 module.exports = app;
