@@ -2,39 +2,16 @@
  * Test Runner
  */
 
-//  Dependencies
-const helpers = require('./../lib/helpers');
-const assert = require('assert');
-
 // Application logic for test runner
 _app = {};
 
 // Containers for the tests
-_app.tests = {
-  'unit' : {}
-};
+_app.tests = {};
 
-// Assert that getNumber function is returning a number
-_app.tests.unit['helpers.getNumber should return a number'] = function(done){
-  let val = helpers.getNumber();
-  assert.equal(typeof(val),'number');
-  done();
-};
+// Add the unit tests
+_app.tests.unit = require('./unit');
 
-// Assert that getNumber function is returning number 33
-_app.tests.unit['helpers.getNumber should return 33'] = function(done){
-  let val = helpers.getNumber();
-  assert.equal(val,33);
-  done();
-};
-
-// Assert that getNumber function is returning number 69(this test should fail)
-_app.tests.unit['helpers.getNumber should return 69'] = function(done){
-  let val = helpers.getNumber();
-  assert.equal(val,69);
-  done();
-};
-
+// Count total number of tests to be run
 _app.countTests = function(){
   let counter = 0;
   for(let key in _app.tests){
