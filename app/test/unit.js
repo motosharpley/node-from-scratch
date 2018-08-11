@@ -52,4 +52,12 @@ unit['logs.truncate should not throw if the logId does not exist it should callb
   },TypeError);
 };
 
+// exampleDebugProb.init should not throw(but it does for the purpose of this example)
+unit['exampleDebugProb.init should not throw when called'] = function(done){
+  assert.doesNotThrow(function(){
+    exampleDebugProb.init();
+      done();
+  },TypeError);
+};
+
 module.exports = unit;
