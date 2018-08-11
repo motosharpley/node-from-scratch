@@ -32,7 +32,14 @@ helpers.makeGetRequest = function(path,callback){
   req.end();
 };
 
-
+// The main init function should run without throwing
+api['app.init should start without throwing'] = function(done){
+  assert.doesNotThrow(function(){
+    app.init(function(err){
+      done();
+    });
+  },TypeError);
+};
 
 // Export tests to the runner
 module.exports = api;
