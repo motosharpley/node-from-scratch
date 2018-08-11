@@ -26,6 +26,26 @@ environment.development = {
   }
 }
 
+// Testing environment
+environment.testing = {
+  'httpPort' : 4000,
+  'httpsPort' : 4001,
+  'envName' : 'testing',
+  'hashingSecret' : 'InsertHashSecret',
+  'maxChecks' : 5,
+  'twilio' : {
+    'accountSid' : 'ACb32d411ad7fe886aac54c665d25e5c5d',
+    'authToken' : '9455e3eb3109edc12e3d8c92768f7a67',
+    'fromPhone' : '+15005550006'
+  },
+  'templateGlobals' : {
+    'appName' : 'Uptime SMS',
+    'companyName' : 'DevPath',
+    'yearCreated' : '2018',
+    'baseUrl' : 'http://localhost:4000/'
+  }
+}
+
 // Production environment
 environment.production = {
   'httpPort' : 5000,
