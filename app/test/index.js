@@ -2,6 +2,9 @@
  * Test Runner
  */
 
+//  Override the NODE_ENV variable
+process.env.NODE_ENV = 'testing';
+
 // Application logic for test runner
 _app = {};
 
