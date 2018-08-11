@@ -16,7 +16,7 @@ const helpers = {};
 helpers.makeGetRequest = function(path,callback){
   // Configure the request details
   let requestDetails = {
-    'protocol' : 'http',
+    'protocol' : 'http:',
     'hostname' : 'localhost',
     'port' : config.httpPort,
     'method' : 'GET',
