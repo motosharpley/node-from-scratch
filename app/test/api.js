@@ -41,5 +41,12 @@ api['app.init should start without throwing'] = function(done){
   },TypeError);
 };
 
+// Make a request to /ping
+api['/ping should respond to GET with 200'] = function(done){
+  helpers.makeGetRequest('/ping',function(res){
+    assert.equal(res.statusCode,200);
+  });
+};
+
 // Export tests to the runner
 module.exports = api;
